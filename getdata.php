@@ -2,10 +2,16 @@
 
 $dir = $_POST['path'];
 
-//$dir ='/opt/lampp/htdocs/phplist/nrm';
+//$dir ='/opt/lampp/htdocs/phplist/nrm/nrm1/newfile';
+
+
+
+
+
 
 if (!empty($_POST['path'])) {
 //   if(true){
+
     $data = array();
     $files1 = scandir($dir);
 
@@ -20,16 +26,22 @@ if (!empty($_POST['path'])) {
 
         $files = $files1[$i];
 
-        $data[] = array('icon'=>$icon,'name'=>$files1[$i]);
+        $data[] = array('icon' => $icon, 'name' => $files1[$i]);
 
 
     }
 
-    $data[]=array('path'=>$dir);
+    $data[] = array('path' => $dir);
 
 //returns data as JSON format
     echo json_encode($data);
 }
+else {
+    $icon = "<img src='images/folder.png' style='width:25px'/>";
+    $data[] = array('icon' => 'icon', 'name' => '..');
+    $data[] = array('path' => $dir . '/..');
+    
 
+}
 
 ?>
