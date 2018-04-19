@@ -16,12 +16,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">NRM</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<!--    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="">-->
+<!--        <span class="navbar-toggler-icon"></span>-->
+<!--    </button>-->
 
 
 </nav>
+
 
 
 <div style="text-align:center">
@@ -32,11 +33,12 @@
         //        echo $path;
 
         ?>
-        /
+<!--        /-->
     </h1>
 
-    <p>The directory list of folder <b style="text-transform: uppercase;" id="pathname">/</b> as follows</p>
+<!--    <p>The directory list of folder <b style="text-transform: uppercase;" id="pathname">/</b> as follows</p>-->
 </div>
+
 
 <?php
 $dir;
@@ -50,6 +52,9 @@ $files2 = scandir($dir, 1);
 //echo $basepath;
 
 ?>
+<!--<ol class="breadcrumb">-->
+<!--    <li class="breadcrumb-item active" id="breadcumcontent">Home</li>-->
+<!--</ol>-->
 <div id="table1">
     <table id="mytable" class="table table-hover" border="1" style="width:100%">
         <?php
@@ -60,9 +65,9 @@ $files2 = scandir($dir, 1);
 
             if ($files1[$i] !== '.' && $files1[$i] !== '..') {
                 if (is_dir($basepath . '/nrm/' . $files1[$i])) {
-                    $icon = "<img src='images/folder.png' style='width:25px'/>";
+                    $icon = "<img src='images/folder.png' style='width:20px'/>";
                 } else {
-                    $icon = "<img src='images/icon.png' style='width:25px'/>";
+                    $icon = "<img src='images/icon.png' style='width:20px'/>";
                 }
 
 
@@ -78,9 +83,15 @@ $files2 = scandir($dir, 1);
 
                     <td>
 
-                        <?php echo $icon . $files1[$i] ?>
+                        <?php
+                        $size = filesize($dir);
+                        echo $icon ."  ". $files1[$i]  ?>
+
 
                     </td>
+<!--                    <td>-->
+<!--                        Filesize:--><?php //echo $size ?>
+<!--                    </td>-->
                 </tr>
                 <?php
             }
@@ -126,9 +137,8 @@ $files2 = scandir($dir, 1);
 
                         dynamicHtml += "<tr class='table-secondary' onclick='fileclick(\"" + newpath.toString() + "\" )'><td>";
                         dynamicHtml += data[i].icon;
-                        dynamicHtml += data[i].name;
-
-                        dynamicHtml += "</tr></td>";
+                        dynamicHtml += "  "+data[i].name;
+                        dynamicHtml += "</td></tr>";
                     }
                 }
 
@@ -144,8 +154,9 @@ $files2 = scandir($dir, 1);
 
                 var base = data[data.length - 1].base;
 
-                document.getElementById("pathname").innerHTML = base;
-                document.getElementById("pathname2").innerHTML = base;
+                // document.getElementById("pathname").innerHTML = base;
+                // document.getElementById("pathname2").innerHTML = base;
+                // document.getElementById("breadcumcontent").innerHTML = 'Home /'+base;
 
             }
 
@@ -174,8 +185,8 @@ $files2 = scandir($dir, 1);
                     document.write(data[i].icon);
                     document.write(data[i].name);
 
-                    document.write("</tr></td>");
-                    document.write("</tr></td>");
+                    document.write("</td>");
+                    document.write("</tr>");
                 }
 
                 document.write("</table>")
@@ -189,6 +200,11 @@ $files2 = scandir($dir, 1);
     }
 
 </script>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="position: fixed;bottom:0px;right:0px">
+    <a class="navbar-brand" href="#" style="text-align: center">NRM@2018</a>
 
+
+
+</nav>
 </body>
 </html>

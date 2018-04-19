@@ -18,15 +18,15 @@ if (!empty($_POST['path'])) {
 
     for ($i = 0; $i < count($files1); $i++) {
         if (is_dir($dir . '/' . $files1[$i])) {
-            $icon = "<img src='images/folder.png' style='width:25px'/>";
+            $icon = "<img src='images/folder.png' style='width:20px'/>";
         } else {
-            $icon = "<img src='images/icon.png' style='width:25px'/>";
+            $icon = "<img src='images/icon.png' style='width:20px'/>";
         }
 
 
         $files = $files1[$i];
-
-        $data[] = array('icon' => $icon, 'name' => $files1[$i]);
+        $size= filesize($dir . '/' . $files1[$i]);
+        $data[] = array('icon' => $icon, 'name' => $files1[$i],'size' => $size);
 
 
     }
@@ -40,7 +40,8 @@ if (!empty($_POST['path'])) {
 }
 else {
     $icon = "<img src='images/folder.png' style='width:25px'/>";
-    $data[] = array('icon' => 'icon', 'name' => '..');
+
+    $data[] = array('icon' => 'icon', 'name' => '..','size' => '0');
     $base = basename($dir);
     $data[] = array('path' => $dir . '/..','base'=> $base);
 
