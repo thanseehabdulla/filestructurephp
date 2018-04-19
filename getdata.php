@@ -30,8 +30,10 @@ if (!empty($_POST['path'])) {
 
 
     }
+    $base = basename($dir);
+    $data[] = array('path' => $dir,'base'=> $base);
 
-    $data[] = array('path' => $dir);
+
 
 //returns data as JSON format
     echo json_encode($data);
@@ -39,8 +41,10 @@ if (!empty($_POST['path'])) {
 else {
     $icon = "<img src='images/folder.png' style='width:25px'/>";
     $data[] = array('icon' => 'icon', 'name' => '..');
-    $data[] = array('path' => $dir . '/..');
-    
+    $base = basename($dir);
+    $data[] = array('path' => $dir . '/..','base'=> $base);
+
+
 
 }
 
