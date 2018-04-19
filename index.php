@@ -13,16 +13,17 @@
 <body>
 
 
+<nav style="z-index:25;position:fixed;width:100%;overflow:hidden;top:0px"
+     class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" style="color: white;cursor:pointer;" onclick="redirect('/')">NRM </a>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="#">NRM</a>
-<!--    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="">-->
-<!--        <span class="navbar-toggler-icon"></span>-->
-<!--    </button>-->
+
+    <div id="breadcrumbshref">
+        <a style="color: white;cursor:pointer;" onclick="redirect('/')">Home</a>
+    </div>
 
 
 </nav>
-
 
 
 <div style="text-align:center">
@@ -33,10 +34,10 @@
         //        echo $path;
 
         ?>
-<!--        /-->
+
     </h1>
 
-<!--    <p>The directory list of folder <b style="text-transform: uppercase;" id="pathname">/</b> as follows</p>-->
+
 </div>
 
 
@@ -47,15 +48,10 @@ $dir = '/opt/lampp/htdocs/phplist/nrm';
 
 $files2 = scandir($dir, 1);
 
-// print_r($files1);
-// print_r($files2);
-//echo $basepath;
 
 ?>
-<!--<ol class="breadcrumb">-->
-<!--    <li class="breadcrumb-item active" id="breadcumcontent">Home</li>-->
-<!--</ol>-->
-<div id="table1">
+
+<div id="table1" style="margin-top:80px">
     <table id="mytable" class="table table-hover" border="1" style="width:100%">
         <?php
         global $files;
@@ -79,24 +75,25 @@ $files2 = scandir($dir, 1);
 
                 $dir = '/opt/lampp/htdocs/phplist/nrm/' . $files;
 
-                echo $dir ?>' )">
+                echo $dir ?>','<?php echo $files ?>' )">
 
                     <td>
 
                         <?php
                         $size = filesize($dir);
-                        echo $icon ."  ". $files1[$i]  ?>
+                        echo $icon . "  " . $files1[$i] ?>
 
 
                     </td>
-<!--                    <td>-->
-<!--                        Filesize:--><?php //echo $size ?>
-<!--                    </td>-->
+                    <!--                    <td>-->
+                    <!--                        Filesize:--><?php //echo $size ?>
+                    <!--                    </td>-->
                 </tr>
                 <?php
             }
         }
         ?>
+
     </table>
 </div>
 
@@ -108,36 +105,41 @@ $files2 = scandir($dir, 1);
     // } );
 
 
-    function fileclick(path) {
+    function fileclick(path, filename) {
 
         // alert(JSON.stringify(path));
         // $("#mytable").remove();
-        dynamictable2(path);
+        dynamictable2(path, filename);
 
 
     }
 
 
-    function dynamictable2(path) {
+    function dynamictable2(path, filename) {
+
         $.ajax({
             type: 'POST',
             url: 'getdata.php',
             dataType: "json",
-            data: {path: path},
+            data: {path: path, filename: filename},
             success: function (data) {
 
 
                 var dynamicHtml = "";
+                var base = data[data.length - 1].path;
+                var dirpath = "/opt/lampp/htdocs/phplist/nrm/";
+                var dirpath2 = "/opt/lampp/htdocs/phplist/nrm"
+                console.log(base)
 
                 dynamicHtml += "<table id='mytable' class='table table-hover' border='1' style='width:100%'>";
                 for (var i = 0; i < data.length - 1; i++) {
                     var newpath = data[data.length - 1].path + '/' + data[i].name;
 
-                    if (data[i].name !== '.') {
+                    if (data[i].name !== '.' && !(data[i].name === '..' && (base === dirpath || base === dirpath2))) {
 
                         dynamicHtml += "<tr class='table-secondary' onclick='fileclick(\"" + newpath.toString() + "\" )'><td>";
                         dynamicHtml += data[i].icon;
-                        dynamicHtml += "  "+data[i].name;
+                        dynamicHtml += "  " + data[i].name;
                         dynamicHtml += "</td></tr>";
                     }
                 }
@@ -145,18 +147,37 @@ $files2 = scandir($dir, 1);
                 dynamicHtml += "</table>";
 
                 $("#table1").html(dynamicHtml);
-                var dir = data[data.length - 1].path.substring(data[data.length - 1].path.lastIndexOf('/') + 1);
-                console.log(data[data.length - 1].path);
-                if (dir === '..') {
-                    var pathArray = (data[data.length - 1].path).split('..')
-                    dir = pathArray[0].substring(pathArray[0].lastIndexOf('/'));
+
+
+                var pathd = ""
+
+                var seperateHome = base.split(dirpath)[1]
+                var pathParts;
+                try {
+                    pathParts = seperateHome.split("/");
+                } catch (e) {
+                    pathParts = "";
                 }
 
-                var base = data[data.length - 1].base;
+                pathd += "<a style='color: white;cursor:pointer;' onclick='redirect(\"/\")'>Home</a>";
+                var realPath = dirpath;
+                for (var i = 0; i < pathParts.length; i++) {
 
-                // document.getElementById("pathname").innerHTML = base;
-                // document.getElementById("pathname2").innerHTML = base;
-                // document.getElementById("breadcumcontent").innerHTML = 'Home /'+base;
+                    if (pathParts[i] === '..') {
+                        i++;
+
+                    } else {
+                        realPath += pathParts[i] + "/";
+
+                        pathd += "<a style='color: white;cursor:pointer;' onclick='redirect(\"" +realPath + "\")'>=>" + pathParts[i] + "</a>"
+                        console.log( realPath);
+                    }
+
+                }
+
+                // pathd += "<a style='color: white;cursor:pointer;' onclick='redirect(\""+seperateHome+"\")'><br/>"+seperateHome+"</a>"
+
+                $("#breadcrumbshref").html(pathd)
 
             }
 
@@ -165,44 +186,26 @@ $files2 = scandir($dir, 1);
     }
 
 
-    function dynamictable(path) {
-        $.ajax({
-            type: 'POST',
-            url: 'getdata.php',
-            dataType: "json",
-            data: {path: path},
-            success: function (data) {
+    function redirect(path) {
+        var paths = path
+        if (path === '/') {
+            var base = '/opt/lampp/htdocs/phplist/nrm';
 
+            dynamictable2(base);
+            var pathd = "";
+            pathd += "<a style='color: white;cursor:pointer;' onclick='redirect(\"/\")'>Home</a>";
+            $("#breadcrumbshref").html(pathd)
+        } else {
+            dynamictable2(path);
 
-                document.write("<table id='mytable' class='table table-hover' border='10px' style='width:100%'>");
-
-                for (var i = 0; i < data.length - 1; i++) {
-
-                    var newpath = data[data.length - 1].path + '/' + data[i].name;
-                    console.log(newpath)
-                    document.write("<tr class='table-secondary' onclick='fileclick(\"" + newpath.toString() + "\" )'><td>");
-
-                    document.write(data[i].icon);
-                    document.write(data[i].name);
-
-                    document.write("</td>");
-                    document.write("</tr>");
-                }
-
-                document.write("</table>")
-
-
-            }
-
-        })
+        }
 
 
     }
 
 </script>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="position: fixed;bottom:0px;right:0px">
-    <a class="navbar-brand" href="#" style="text-align: center">NRM@2018</a>
-
+<!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="position: fixed;bottom:0px;right:0px">-->
+<!--    <a class="navbar-brand" href="#" style="text-align: center">NRM@2018</a>-->
 
 
 </nav>

@@ -5,6 +5,9 @@ $dir = $_POST['path'];
 //$dir ='/opt/lampp/htdocs/phplist/nrm/nrm1/newfile';
 
 
+//$filename = $_POST['filename'];
+
+$home = '/opt/lampp/htdocs/phplist/nrm/';
 
 
 
@@ -31,7 +34,28 @@ if (!empty($_POST['path'])) {
 
     }
     $base = basename($dir);
-    $data[] = array('path' => $dir,'base'=> $base);
+    $split = explode('/', $dir);
+    $pathd="";
+    for($j =0 ; $j <count($split); $j++ ){
+        if($split[$j] == '..'){
+           $temp = explode('/', $pathd);
+           $pathd="";
+            for($k =0 ; $k <count($temp)-1; $k++ ) {
+            if($k !== 0)
+            $pathd = $pathd."/".$temp[$k];
+            else
+                $pathd = $pathd.$temp[$k];
+            }
+        }else{
+        if($j !== 0)
+         $pathd= $pathd ."/".$split[$j];
+        else
+            $pathd= $pathd .$split[$j];
+        }
+    }
+
+
+    $data[] = array('path' => $pathd,'base'=> $base);
 
 
 
@@ -43,9 +67,20 @@ else {
 
     $data[] = array('icon' => 'icon', 'name' => '..','size' => '0');
     $base = basename($dir);
-    $data[] = array('path' => $dir . '/..','base'=> $base);
 
+    $split = explode('/', $dir);
+    $pathd="";
+    for($j =0 ; $j <count($split); $j++ ){
+        if($split[$j] == '..'){
+            $j++;
+        }else{
+            $pathd= $pathd . $split[$j];
+        }
+    }
 
+    $data[] = array('path' => $pathd,'base'=> $base);
+
+    echo json_encode($data);
 
 }
 
